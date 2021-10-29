@@ -21,6 +21,7 @@ static int __init my_module_init(void) {
     struct desc_ptr gdt;
     struct desc_struct *ptr;
     struct desc_struct *end;
+    unsigned int i = 0;
 
     native_store_gdt(&gdt);
     printk(KERN_ALERT "GDT descriptor address: %#lx\n", gdt.address);
@@ -29,8 +30,9 @@ static int __init my_module_init(void) {
     end = (struct desc_struct *) gdt.address + gdt.size;
 
     for (ptr = (struct desc_struct *) gdt.address; ptr < end; ptr++) {
-        printk(KERN_ALERT "Descriptor address: %#lx\n", ptr);
+        printk(KERN_ALERT "index: %d Descriptor address: %#lx\n", i, ptr);
         print_descriptor(ptr);
+        i++;
     }
 
     return 0;
