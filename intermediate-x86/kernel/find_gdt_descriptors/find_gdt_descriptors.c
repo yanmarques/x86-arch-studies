@@ -5,8 +5,10 @@
 #include <asm/desc_defs.h>
 
 static void print_descriptor(struct desc_struct *descriptor) {
-    printk(KERN_ALERT "Limit: %#x %#x\n", descriptor->limit0, descriptor->limit1);
-    printk(KERN_ALERT "Base: %#x %#x %#x\n", descriptor->base0, descriptor->base1, descriptor->base2);
+    unsigned long entry = descriptor->base0 | (descriptor->base1 << 16) | (descriptor->base2 << 24);
+    unsigned int limit = descriptor->limit0 | (descriptor->limit1 << 16);
+    printk(KERN_ALERT "Limit: %#x\n", limit);
+    printk(KERN_ALERT "Base: %#lx\n", entry);
     printk(KERN_ALERT "Descriptor Privilege Level: %d\n", descriptor->dpl);
     printk(KERN_ALERT "Type: %#x\n", descriptor->type);
     printk(KERN_ALERT "System: %#x\n", descriptor->s);
@@ -32,6 +34,7 @@ static int __init my_module_init(void) {
     for (ptr = (struct desc_struct *) gdt.address; ptr < end; ptr++) {
         printk(KERN_ALERT "index: %d Descriptor address: %#lx\n", i, ptr);
         print_descriptor(ptr);
+        printk(KERN_ALERT "\n");
         i++;
     }
 
